@@ -34,7 +34,11 @@ if __name__ == "__main__":
     print ">>> TEST CREATE CLEANUP FOR TENANT", args.tenant
 
     print ""
-    tenant.add(server, args.login, args.password, tier, args.tenant)
+    try:
+        tenant.add(server, args.login, args.password, tier, args.tenant)
+    except Exception as e:
+        if "Cannot insert duplicate key in object 'admin.tenants'" not in str(e):
+            raise
 
     if args.DBSERVER:
         print ""

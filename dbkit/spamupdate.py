@@ -62,7 +62,7 @@ if __name__ == "__main__":
     folder = ""
     if args.service in ["core", "dbcore", "coredb"]:
         service = "core"
-        folder = "dbcore"
+        folder = "sql-core"
     else:
         cursor_admin.execute("SELECT service, dbFolder FROM admin.services WHERE service = '%s'" % args.service)
         r = cursor_admin.fetchone()

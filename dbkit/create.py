@@ -211,6 +211,8 @@ def get_highest_version(folder):
                 if version > highest_version:
                     highest_version = version
         return highest_version
+    raise RuntimeError("can't get highest version for %s" % folder)
+
 
 def create_db(server, login, password, database, root, developer=None, DROPDB=False, FILENAMES=False, SQL=False):
 
@@ -368,7 +370,7 @@ def create_db(server, login, password, database, root, developer=None, DROPDB=Fa
     # insert version
     if developer:
         version = get_highest_version(root)
-        print_header("APPLYING VERSION (%s, %d)" % (developer, version))
+        print_header("APPLYING VERSION (%s, %s)" % (developer, version))
         cursor.execute("INSERT INTO zsystem.versions (developer, version, versionDate, userName, loginName, executionCount) VALUES ('%s', %d, GETUTCDATE(), 'dbkit', '%s', 0)" % (developer, version, login))
 
     stop_time = datetime.now()
@@ -403,5 +405,5 @@ if __name__ == "__main__":
     parser.add_argument("-SQL", action="store_true", help="Print SQL.")
 
     args = parser.parse_args()
-    
+
     create_db(args.server, args.login, args.password, args.database, args.root, args.developer, args.DROPDB, args.FILENAMES, args.SQL)

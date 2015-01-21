@@ -71,6 +71,8 @@ def remove(server, login, password, tier, tenant):
 
 def create_db_for_tenant_service(server, login, password, tier, tenant, service):
 
+    print "Creating DB for tenant '%s' and service '%s'" % (tenant, service)
+
     conn_admin = dbconn_admin(server, login, password, tier)
     cursor_admin = conn_admin.cursor()
 
@@ -91,9 +93,9 @@ def create_db_for_tenant_service(server, login, password, tier, tenant, service)
         raise RuntimeError("Tenant not registered in admin.tenants")
     server_tenant = r.dbServer if r.dbServer else server
     if r.useSingleDb:
-        database = "sk_%s_%s_ALL" % (tier, tenant)
+        database = "vk_%s_%s_ALL" % (tier, tenant)
     else:
-        database = "sk_%s_%s_%s" % (tier, tenant, service)
+        database = "vk_%s_%s_%s" % (tier, tenant, service)
 
     # check database in admin.databases
     c = cursor_admin.execute_scalar("SELECT COUNT(*) FROM admin.databases WHERE service = '%s' AND tenant = '%s'" % (service, tenant))
@@ -145,7 +147,7 @@ def create_db_for_tenant_service(server, login, password, tier, tenant, service)
     if core_part_exists:
         print "CORE PART ALREADY EXISTS, SKIPPING!"
     else:
-        create.create_db(server_tenant, login, password, database, os.path.join("../", "dbcore"), "CORE")
+        create.create_db(server_tenant, login, password, database, os.path.join("sql-core"), "CORE")
 
     print ""
     print "CREATING %s PART" % developer
@@ -206,9 +208,9 @@ def drop_db_for_tenant_service(server, login, password, tier, tenant, service):
     server_tenant = r.dbServer if r.dbServer else server
     useSingleDb = r.useSingleDb
     if useSingleDb:
-        database = "sk_%s_%s_ALL" % (tier, tenant)
+        database = "vk_%s_%s_ALL" % (tier, tenant)
     else:
-        database = "sk_%s_%s_%s" % (tier, tenant, service)
+        database = "vk_%s_%s_%s" % (tier, tenant, service)
 
     # check database in admin.databases
     c = cursor_admin.execute_scalar("SELECT COUNT(*) FROM admin.databases WHERE service = '%s' AND tenant = '%s'" % (service, tenant))

@@ -18,7 +18,7 @@ def run_cmd(cmd, cmd_input = None, mode=""):
         raise subprocess.CalledProcessError(p.returncode, stderr)
     if "b" not in mode:
         stdout = stdout.replace("\r\n", "\n")
-    return stdout           
+    return stdout
 
 
 #
@@ -56,7 +56,7 @@ def p4_changelist_info(client, changelist):
     for line in po.splitlines():
         if line == LINEEND or line in UNUSEDLINES:
             continue
-        
+
         if line.startswith(TEXT):
             text.append(line[len(TEXT):])
         elif line.startswith(INFO):
@@ -68,7 +68,7 @@ def p4_changelist_info(client, changelist):
         ret["num"] = subject[1]
         ret["user"] = subject[3].split("@")[0]
     except Exception, ex:
-        raise RuntimeError("Error encountered while parsing change:\n%s" % ex.message) 
+        raise RuntimeError("Error encountered while parsing change:\n%s" % ex.message)
 
     descr = ""
     for line in text:
@@ -87,14 +87,14 @@ def p4_changelist_info(client, changelist):
         fileinfo = {}
         fileinfo["path"] = splitline[PATH]
         if fileinfo["path"].endswith(".sql"):
-            fileinfo["revision"] = splitline[REVISION] 
+            fileinfo["revision"] = splitline[REVISION]
             fileinfo["action"] = splitline[CHANGETYPE]
             if fileinfo["action"] not in ["add", "edit", "move/add", "delete", "move/delete"]:
                 raise RuntimeError("Action '%s' not supported" % fileinfo["action"])
             filelist.append(fileinfo)
-        
+
     ret["files"] = filelist
-    
+
     return ret
 
 
@@ -113,13 +113,13 @@ def p4_os_folder_for_depot_file(client, depot_folder_file):
             # remove the last part, there are probably better ways to do this but this works
     if filePath is None:
         raise RuntimeError("Please make sure folder is included in your clientspec (%s)" % depot_folder_file)
-        
+
     return "\\".join(filePath.split("\\")[:-1])
 
 
 def p4_os_file_content(client, depot_folder_file):
     """
-        Find a local version of file specifed by Perforce depot path, 
+        Find a local version of file specifed by Perforce depot path,
         verify the contents, then return as list
     """
     # Use fstat to find the file on disk
@@ -135,10 +135,10 @@ def p4_os_file_content(client, depot_folder_file):
 
     if localpath is None:
         raise RuntimeError("Failed to find file %s" % depot_folder_file)
-        
+
     file = open(localpath)
     ret = []
-    
+
     line = file.readline()
     linecount = 1
     while line != "":
@@ -148,7 +148,7 @@ def p4_os_file_content(client, depot_folder_file):
         line = file.readline()
         linecount = linecount + 1
     file.close()
-    
+
     return ret
 
 
@@ -177,9 +177,9 @@ def update_folder_service_from_change(change):
             continue
 
         folder = ""
-        if "/vk-dbcore/" in filename:
-            i = filename.find("/vk-dbcore/")
-            i = i + 10
+        if "/sql-core/" in filename:
+            i = filename.find("/sql-core/")
+            i = i + 9
             folder = filename[:i]
         elif "/db/" in filename:
             i = filename.find("/db/")
@@ -195,7 +195,7 @@ def update_folder_service_from_change(change):
             raise RuntimeError("Multiple folders found (%s and %s)" % (update_folder, folder))
 
         service = ""
-        if folder.endswith("/vk-dbcore"):
+        if folder.endswith("/sql-core"):
             service = "core"
         elif folder.endswith("/db"):
             l = folder.split("/")
@@ -226,12 +226,12 @@ def get_update(client, path, action):
     """
         Get update text for the specified file and action. For functions, views
         and procs, this means simply copying the content for either add or edit.
-        For a table we must distinguish between add and edit, edit is not 
+        For a table we must distinguish between add and edit, edit is not
         automatic at this stage.
     """
     file_content = p4_os_file_content(client, path)
     # Check for tabs in all files
-    
+
     TABLE_MARKER = "CREATE TABLE "
 
     UPDATE_TABLE = """
@@ -477,7 +477,7 @@ if __name__ == "__main__":
 
         if changelist == "default":
             raise RuntimeError("Please move your change to a saved changelist before wrapping update")
-        
+
         if action == "GENERATE":
             generate_db_update(client, changelist)
         elif action == "WRAP":

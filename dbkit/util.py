@@ -11,7 +11,7 @@ def pad_str(str, len, chr=" "):
 
 def dbconn_admin(server, login, password, tier):
 
-    database = "sk_%s_admin" % tier
+    database = "vk_%s_admin" % tier
 
     return pytds.connect(
         server=server,
@@ -26,7 +26,7 @@ def dbconn_admin(server, login, password, tier):
 
 def dbcursor_admin(server, login, password, tier):
 
-    database = "sk_%s_admin" % tier
+    database = "vk_%s_admin" % tier
 
     dbconn = pytds.connect(
         server=server,
